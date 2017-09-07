@@ -1,0 +1,40 @@
+buildscript {
+    ext {
+        vertxVersion = '3.4.2'
+        sqliteVersion = '3.20.0'
+    }
+
+    repositories {
+        jcenter()
+    }
+}
+
+apply plugin: 'java'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "io.vertx:vertx-web:$vertxVersion"
+    compile "io.vertx:vertx-jdbc-client:$vertxVersion"
+    compile "org.xerial:sqlite-jdbc:$sqliteVersion"
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+jar {
+    archiveName = 'com.example.todo.jar'
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    manifest {
+        attributes 'Main-Class': 'io.vertx.core.Launcher'
+        attributes 'Main-Verticle': 'com.example.todo.verticle.TodoVerticle'
+    }
+}
